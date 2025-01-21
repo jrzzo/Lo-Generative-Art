@@ -1,5 +1,4 @@
 # Lo-Generative-Art
-# Lo Generative Art
 
 ## Introduction
 
