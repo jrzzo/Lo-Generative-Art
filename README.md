@@ -77,6 +77,6 @@ To run this project:
 
 ## License
 
-This project is licensed under the **CC0** license.
+This project is licensed under the **CC04** license.
 
 
