@@ -1,0 +1,146 @@
+int numRects;
+float maxRectLength;
+float minRectLength;
+float rectWidth;
+
+color[] baseColors = {
+  color(217, 37, 37),
+  color(255, 0, 0),
+  color(255, 127, 0),
+  color(255, 255, 0),
+  color(255),
+  color(0, 255, 255),
+  color(135, 206, 235),
+  color(30, 144, 255),
+  color(0, 0, 139),
+  color(0, 100, 0),
+  color(34, 139, 34),
+  color(218, 165, 32),
+  color(139, 69, 19)
+};
+
+int[] paletteFrequencies = new int[13];
+
+void setup() {
+  size(2080, 2080);
+  noLoop();
+
+  File folder = new File(sketchPath("output"));
+  if (!folder.exists()) {
+    folder.mkdir();
+  }
+
+  for (int i = 0; i < 999; i++) {
+    generateFrame(i);
+    saveFrame("output/frame" + nf(i, 4) + ".png");
+  }
+
+  printPaletteFrequencies();
+}
+
+void generateFrame(int index) {
+  color[] currentPalette = generateRandomPalette();
+
+  int paletteIndex = currentPalette.length - 1;
+  paletteFrequencies[paletteIndex]++;
+
+  numRects = int(random(100, 5001));
+  maxRectLength = random(100, 401);
+  minRectLength = random(50, 201);
+  rectWidth = random(10, 51);
+
+  color backgroundColor = currentPalette[int(random(currentPalette.length))];
+  background(backgroundColor);
+
+  ArrayList<String> uniqueColors = new ArrayList<String>();
+
+  drawPattern(currentPalette, uniqueColors);
+
+  saveMetadata(index, currentPalette);
+}
+
+color[] generateRandomPalette() {
+  int numColors = int(random(1, 14));
+  color[] palette = new color[numColors];
+ 
+  ArrayList<Integer> availableColors = new ArrayList<Integer>();
+  for (int i = 0; i < baseColors.length; i++) {
+    availableColors.add(color(baseColors[i]));
+  }
+
+  for (int i = 0; i < numColors; i++) {
+    int randomIndex = int(random(availableColors.size()));
+    palette[i] = availableColors.get(randomIndex);
+    availableColors.remove(randomIndex);
+  }
+ 
+  return palette;
+}
+
+void drawPattern(color[] currentPalette, ArrayList<String> uniqueColors) {
+  float centerX = width / random(2, 4);
+  float centerY = height / random(1, 4);
+
+  for (int i = 0; i < numRects; i++) {
+    float t = map(i, 115, numRects, 68, TWO_PI * 300);
+    float xOff = cos(t) * (50 + i / 1);
+    float yOff = sin(t) * (50 + i / 1);
+
+    float x = centerX + xOff;
+    float y = centerY + yOff;
+    float angle = atan2(yOff, xOff);
+
+    float rectLength = random(minRectLength, maxRectLength);
+
+    pushMatrix();
+    translate(x, y);
+    rotate(angle);
+    fill(currentPalette[int(random(currentPalette.length))]);
+    stroke(0);
+    strokeWeight(4);
+    rect(0, 0, rectLength, rectWidth);
+    popMatrix();
+
+    String colorKey = colorToString(currentPalette[int(random(currentPalette.length))]);
+    if (!uniqueColors.contains(colorKey)) {
+      uniqueColors.add(colorKey);
+    }
+  }
+}
+
+String colorToString(color c) {
+  return "rgb(" + (int)red(c) + "," + (int)green(c) + "," + (int)blue(c) + ")";
+}
+
+void saveMetadata(int index, color[] currentPalette) {
+  JSONObject metadata = new JSONObject();
+
+  metadata.setString("name", "lo #" + index);
+  metadata.setString("description", "lo (" + index + ")");
+  metadata.setString("image", "https://arweave.net/abcd1234xyz");
+  metadata.setString("creator", "jrzzo");
+  metadata.setString("license", "cco4");
+
+  metadata.setInt("numRects", numRects);
+  metadata.setFloat("maxRectLength", maxRectLength);
+  metadata.setFloat("minRectLength", minRectLength);
+  metadata.setFloat("rectWidth", rectWidth);
+
+  metadata.setInt("paletteSize", currentPalette.length);
+
+  String filePath = sketchPath("output/metadata_" + nf(index, 4) + ".json");
+  try {
+    PrintWriter file = createWriter(filePath);
+    file.println(metadata.toString());
+    file.close();
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+}
+
+void printPaletteFrequencies() {
+  println("Palette Frequencies: ");
+  for (int i = 0; i < 13; i++) {
+    println("Palette " + (i + 1) + ": " + paletteFrequencies[i]);
+  }
+}
