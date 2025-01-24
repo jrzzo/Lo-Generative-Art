@@ -1,7 +1,41 @@
+import java.io.File;
+
 int numRects;
 float maxRectLength;
 float minRectLength;
 float rectWidth;
+
+color[] backgroundColors = {
+  color(0),
+  color(255),
+  color(0, 0, 139),
+  color(217, 37, 37),
+  color(255, 127, 0),
+  color(135, 206, 235),
+  color(139, 69, 19),
+  color(255, 255, 0),
+  color(0, 255, 255),
+  color(30, 144, 255),
+  color(0, 100, 0),
+  color(34, 139, 34),
+  color(218, 165, 32),
+};
+
+float[] backgroundWeights = {
+  0.001,
+  0.47,
+  0.15,
+  0.1,
+  0.07,
+  0.06,
+  0.003,
+  0.04,
+  0.03,
+  0.02,
+  0.02,
+  0.015,
+  0.015
+};
 
 color[] baseColors = {
   color(217, 37, 37),
@@ -19,7 +53,21 @@ color[] baseColors = {
   color(139, 69, 19)
 };
 
-int[] paletteFrequencies = new int[13];
+float[] paletteWeights = {
+  0.005,
+  0.65,
+  0.65,
+  0.1,
+  0.07,
+  0.05,
+  0.025,
+  0.02,
+  0.015,
+  0.01,
+  0.005,
+  0.0025,
+  0.001
+};
 
 void setup() {
   size(2080, 2080);
@@ -34,50 +82,58 @@ void setup() {
     generateFrame(i);
     saveFrame("output/frame" + nf(i, 4) + ".png");
   }
-
-  printPaletteFrequencies();
 }
 
 void generateFrame(int index) {
-  color[] currentPalette = generateRandomPalette();
+  color backgroundColor = pickWeightedColor(backgroundColors, backgroundWeights);
+  background(backgroundColor);
 
-  int paletteIndex = currentPalette.length - 1;
-  paletteFrequencies[paletteIndex]++;
+  color[] currentPalette = generateRandomPalette();
 
   numRects = int(random(100, 5001));
   maxRectLength = random(100, 401);
   minRectLength = random(50, 201);
   rectWidth = random(10, 51);
 
-  color backgroundColor = currentPalette[int(random(currentPalette.length))];
-  background(backgroundColor);
+  drawPattern(currentPalette);
 
-  ArrayList<String> uniqueColors = new ArrayList<String>();
+  saveMetadata(index, backgroundColor, currentPalette);
+}
 
-  drawPattern(currentPalette, uniqueColors);
-
-  saveMetadata(index, currentPalette);
+color pickWeightedColor(color[] colors, float[] weights) {
+  float r = random(1);
+  float cumulativeWeight = 0;
+  for (int i = 0; i < weights.length; i++) {
+    cumulativeWeight += weights[i];
+    if (r <= cumulativeWeight) {
+      return colors[i];
+    }
+  }
+  return colors[colors.length - 1];
 }
 
 color[] generateRandomPalette() {
-  int numColors = int(random(1, 14));
-  color[] palette = new color[numColors];
- 
-  ArrayList<Integer> availableColors = new ArrayList<Integer>();
-  for (int i = 0; i < baseColors.length; i++) {
-    availableColors.add(color(baseColors[i]));
+  int paletteSize = pickWeightedIndex(paletteWeights) + 1;
+  color[] palette = new color[paletteSize];
+  for (int i = 0; i < paletteSize; i++) {
+    palette[i] = baseColors[int(random(baseColors.length))];
   }
-
-  for (int i = 0; i < numColors; i++) {
-    int randomIndex = int(random(availableColors.size()));
-    palette[i] = availableColors.get(randomIndex);
-    availableColors.remove(randomIndex);
-  }
- 
   return palette;
 }
 
-void drawPattern(color[] currentPalette, ArrayList<String> uniqueColors) {
+int pickWeightedIndex(float[] weights) {
+  float r = random(1);
+  float cumulativeWeight = 0;
+  for (int i = 0; i < weights.length; i++) {
+    cumulativeWeight += weights[i];
+    if (r <= cumulativeWeight) {
+      return i;
+    }
+  }
+  return weights.length - 1;
+}
+
+void drawPattern(color[] currentPalette) {
   float centerX = width / random(2, 4);
   float centerY = height / random(1, 4);
 
@@ -100,47 +156,34 @@ void drawPattern(color[] currentPalette, ArrayList<String> uniqueColors) {
     strokeWeight(4);
     rect(0, 0, rectLength, rectWidth);
     popMatrix();
-
-    String colorKey = colorToString(currentPalette[int(random(currentPalette.length))]);
-    if (!uniqueColors.contains(colorKey)) {
-      uniqueColors.add(colorKey);
-    }
   }
 }
 
-String colorToString(color c) {
-  return "rgb(" + (int)red(c) + "," + (int)green(c) + "," + (int)blue(c) + ")";
-}
-
-void saveMetadata(int index, color[] currentPalette) {
+void saveMetadata(int index, color backgroundColor, color[] currentPalette) {
   JSONObject metadata = new JSONObject();
 
   metadata.setString("name", "lo #" + index);
   metadata.setString("description", "lo (" + index + ")");
   metadata.setString("image", "https://arweave.net/abcd1234xyz");
-  metadata.setString("creator", "jrzzo");
-  metadata.setString("license", "cco4");
 
   metadata.setInt("numRects", numRects);
   metadata.setFloat("maxRectLength", maxRectLength);
   metadata.setFloat("minRectLength", minRectLength);
   metadata.setFloat("rectWidth", rectWidth);
 
+  metadata.setString("background", colorToString(backgroundColor));
   metadata.setInt("paletteSize", currentPalette.length);
 
-  String filePath = sketchPath("output/metadata_" + nf(index, 4) + ".json");
-  try {
-    PrintWriter file = createWriter(filePath);
-    file.println(metadata.toString());
-    file.close();
-  } catch (Exception e) {
-    e.printStackTrace();
+  JSONArray colors = new JSONArray();
+  for (color c : currentPalette) {
+    colors.append(colorToString(c));
   }
+  metadata.setJSONArray("color_palette", colors);
+
+  String filePath = sketchPath("output/metadata_" + nf(index, 4) + ".json");
+  saveJSONObject(metadata, filePath);
 }
 
-void printPaletteFrequencies() {
-  println("Palette Frequencies: ");
-  for (int i = 0; i < 13; i++) {
-    println("Palette " + (i + 1) + ": " + paletteFrequencies[i]);
-  }
+String colorToString(color c) {
+  return "rgb(" + (int)red(c) + "," + (int)green(c) + "," + (int)blue(c) + ")";
 }
