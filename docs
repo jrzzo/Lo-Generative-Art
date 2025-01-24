@@ -1,590 +1,224 @@
-To calculate the number of possible combinations for the Lo generative art collection, we need to consider the different variables in the code and how they interact to form the final image. Let's break this down:
+Overview
 
-Variables in the Code
-Color Palette:
-You have 13 colors in total. For each piece, you generate a palette with 1 to 13 colors, and the colors are randomly chosen from the set. Each artwork can have a different number of colors, and those colors are chosen from the total palette.
+This generative art project creates 999 unique pieces of art, each with varying traits, colors, and patterns. The project uses randomness to determine the characteristics of each piece while adhering to predefined rarity rules.
 
-For each n-color palette, the number of ways to choose n colors from the 13 colors is calculated using combinations (also called binomial coefficients), specifically:
+Generations and Total Possibilities
 
-Combinations of 
-𝑛
- colors from 13
-=
-(
-13
-𝑛
-)
-=
-13
-!
-𝑛
-!
-(
-13
-−
-𝑛
-)
-!
-Combinations of n colors from 13=( 
-n
-13
-​
- )= 
-n!(13−n)!
-13!
-​
- 
-Then, you need to factor in how many possible color palettes can be generated across the 13 options.
+Calculation of Total Possible Generations
 
-Number of Rectangles (numRects):
-This value is a random integer between 100 and 5000. The total number of rectangles is chosen randomly in this range, so there are 4901 possible values for numRects (from 100 to 5000 inclusive).
+The total number of possible generations is determined by the combinations of the variable traits in the code. Below is the breakdown:
 
-Maximum and Minimum Rectangle Length (maxRectLength and minRectLength):
-The length of the rectangles is randomly chosen between 50 and 400 for the minimum, and between 100 and 400 for the maximum. The possible combinations for each of these variables can be calculated by their range:
+Background Colors: 13 options with weighted probabilities.
 
-For minRectLength: 351 options (from 50 to 400).
-For maxRectLength: 301 options (from 100 to 400).
-Rectangle Width (rectWidth):
-This is randomly chosen between 10 and 50. Therefore, there are 41 possible values for rectWidth (from 10 to 50 inclusive).
+Palette Sizes: 1 to 13 colors, with rarity weights.
 
-Background Color:
-You have 13 background colors, one of which is chosen randomly for each piece.
+Weighted probabilities favor 2-color and 3-color palettes (~65%).
 
-Total Combinations
-To calculate the total combinations, we need to account for the different factors mentioned above. Here's the formula:
+Rectangles:
 
-Total combinations
-=
-∑
-𝑛
-=
-1
-13
-(
-13
-𝑛
-)
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-Total combinations= 
-n=1
-∑
-13
-​
- ( 
-n
-13
-​
- )×4901×351×301×41×13
-Step-by-Step Breakdown:
-Combinations for each palette size (1 to 13 colors):
-For each n (1 to 13), calculate the binomial coefficient 
-(
-13
-𝑛
-)
-( 
-n
-13
-​
- ).
-Total for each palette size:
-For each palette size, multiply by the number of possible values for the other variables:
-Combinations per palette
-=
-(
-13
-𝑛
-)
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-Combinations per palette=( 
-n
-13
-​
- )×4901×351×301×41×13
-Sum of all combinations for each palette size:
-Sum the results from all palette sizes, where 
-𝑛
-=
-1
-n=1 to 
-𝑛
-=
-13
-n=13.
-Calculations for the Binomial Coefficients:
-We can calculate the binomial coefficients 
-(
-13
-𝑛
-)
-( 
-n
-13
-​
- ) for each n (1 to 13):
+Number of Rectangles: Random between 100 to 5000.
 
-(
-13
-1
-)
-=
-13
-,
-(
-13
-2
-)
-=
-78
-,
-(
-13
-3
-)
-=
-286
-,
-…
-,
-(
-13
-13
-)
-=
-1
-( 
-1
-13
-​
- )=13,( 
-2
-13
-​
- )=78,( 
-3
-13
-​
- )=286,…,( 
-13
-13
-​
- )=1
-Total Number of Combinations
-Summing up the combinations for each palette size will give us the total number of possibilities. For example:
+Maximum Rectangle Length: Random between 100 to 400.
 
-For n = 1 (1 color):
+Minimum Rectangle Length: Random between 50 to 200.
 
-13
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-13×4901×351×301×41×13
-For n = 2 (2 colors):
+Rectangle Width: Random between 10 to 50.
 
-78
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-78×4901×351×301×41×13
-And so on for all values from n = 1 to n = 13.
+Color Combinations:
 
-This formula gives you a rough estimate of the total number of possible unique combinations for the Lo project. If you want an exact figure, you'd need to compute each binomial coefficient and multiply as described.
+Each palette randomly selects colors from 13 base colors.
 
+Given these variations, the code can theoretically generate billions of unique outputs due to the combinatorial explosion caused by the range of numerical traits and randomization.
 
+Traits
 
+Each piece has the following traits:
 
+Background Color
 
-Let's calculate the total number of possible combinations for the Lo generative art collection based on the variables provided. We will follow the formula step by step.
+One of 13 colors selected based on weighted rarity.
 
-Key Variables:
-Color Palettes: 13 colors are available, and each artwork can have between 1 to 13 colors. We'll calculate combinations for each number of colors (1 to 13).
+Example: "Black" (1/999 chance), "White" (47%), etc.
 
-Other Variables:
+Palette Size
 
-numRects: 4901 possible values (from 100 to 5000).
-maxRectLength: 351 possible values (from 50 to 400).
-minRectLength: 301 possible values (from 100 to 400).
-rectWidth: 41 possible values (from 10 to 50).
-backgroundColor: 13 possible values.
-Binomial Coefficients (Combinations) for Selecting Colors:
-We need to calculate the binomial coefficient 
-(
-13
-𝑛
-)
-( 
-n
-13
-​
- ) for 
-𝑛
-=
-1
-n=1 to 
-𝑛
-=
-13
-n=13.
+Number of colors in the palette (1 to 13).
 
-(
-13
-1
-)
-=
-13
-( 
-1
-13
-​
- )=13
-(
-13
-2
-)
-=
-78
-( 
-2
-13
-​
- )=78
-(
-13
-3
-)
-=
-286
-( 
-3
-13
-​
- )=286
-(
-13
-4
-)
-=
-715
-( 
-4
-13
-​
- )=715
-(
-13
-5
-)
-=
-1287
-( 
-5
-13
-​
- )=1287
-(
-13
-6
-)
-=
-1716
-( 
-6
-13
-​
- )=1716
-(
-13
-7
-)
-=
-1716
-( 
-7
-13
-​
- )=1716
-(
-13
-8
-)
-=
-1287
-( 
-8
-13
-​
- )=1287
-(
-13
-9
-)
-=
-715
-( 
-9
-13
-​
- )=715
-(
-13
-10
-)
-=
-286
-( 
-10
-13
-​
- )=286
-(
-13
-11
-)
-=
-78
-( 
-11
-13
-​
- )=78
-(
-13
-12
-)
-=
-13
-( 
-12
-13
-​
- )=13
-(
-13
-13
-)
-=
-1
-( 
-13
-13
-​
- )=1
-Formula for Total Combinations:
-Total combinations
-=
-∑
-𝑛
-=
-1
-13
-(
-13
-𝑛
-)
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-Total combinations= 
-n=1
-∑
-13
-​
- ( 
-n
-13
-​
- )×4901×351×301×41×13
-Let’s calculate the total step by step.
+Example: "2-Color Palette" (~40%), "13-Color Palette" (most rare).
 
-Calculation:
-We’ll calculate each term for 
-𝑛
-=
-1
-n=1 to 
-𝑛
-=
-13
-n=13 and then sum them up.
+Pattern Traits
 
-For 
-𝑛
-=
-1
-n=1:
-(
-13
-1
-)
-=
-13
-( 
-1
-13
-​
- )=13
-13
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-=
-13
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-13×4901×351×301×41×13=13×4901×351×301×41×13
-=
-13
-×
-4901
-×
-351
-×
-301
-×
-5333
-=13×4901×351×301×5333
-=
-13
-×
-4901
-×
-351
-×
-160
-,
-075
-,
-133
-=13×4901×351×160,075,133
-=
-13
-×
-4901
-×
-56
-,
-138
-,
-313
-,
-350
-=13×4901×56,138,313,350
-=
-13
-×
-274
-,
-339
-,
-808
-,
-416
-,
-850
-=13×274,339,808,416,850
-=
-3
-,
-566
-,
-418
-,
-500
-,
-418
-,
-050
-=3,566,418,500,418,050
-For 
-𝑛
-=
-2
-n=2:
-(
-13
-2
-)
-=
-78
-( 
-2
-13
-​
- )=78
-78
-×
-4901
-×
-351
-×
-301
-×
-41
-×
-13
-=
-78
-×
-4901
-×
-351
-×
-301
-×
-5333
-78×4901×351×301×41×13=78×4901×351×301×5333
-Similar steps follow, computing the result.
+Number of Rectangles: Between 100 and 5000.
+
+Maximum Rectangle Length: Between 100 and 400.
+
+Minimum Rectangle Length: Between 50 and 200.
+
+Rectangle Width: Between 10 and 50.
+
+These traits are recorded as precise numeric values in the metadata.
+
+Rarity Scale
+
+Background Color Rarity:
+
+Rarest: Black (1 in 999).
+
+Common: White (47%).
+
+Palette Size Rarity:
+
+Common: 2-Color, 3-Color (~65%).
+
+Rare: 1-Color, 13-Color.
+
+Pattern Traits:
+
+Each numeric value (e.g., rectangle count, dimensions) is uniformly distributed within its range, ensuring variability without strict rarity.
+
+Math Breakdown
+
+Weighted Random Selection
+
+The function pickWeightedBackgroundColor uses a cumulative weight approach:
+
+float r = random(1);
+float cumulativeWeight = 0;
+for (int i = 0; i < backgroundWeights.length; i++) {
+  cumulativeWeight += backgroundWeights[i];
+  if (r <= cumulativeWeight) {
+    return backgroundColors[i];
+  }
+}
+
+This ensures that rarer background colors like black have a lower chance of being selected compared to common colors like white.
+
+Rectangle Placement
+
+The placement of rectangles is determined by trigonometric calculations:
+
+float t = map(i, 0, numRects, 0, TWO_PI * 300);
+float xOff = cos(t) * (50 + i / 1);
+float yOff = sin(t) * (50 + i / 1);
+
+Here, rectangles are placed in a radial pattern, with increasing distance from the center.
+
+Metadata Generation
+
+Numeric traits are stored in the metadata:
+
+metadata.setFloat("maxRectLength", maxRectLength);
+metadata.setFloat("minRectLength", minRectLength);
+metadata.setFloat("rectWidth", rectWidth);
+metadata.setInt("numRects", numRects);
+
+Line-by-Line Code Breakdown
+
+Setup and Initialization
+
+void setup() {
+  size(2080, 2080);
+  noLoop();
+
+  File folder = new File(sketchPath("output"));
+  if (!folder.exists()) {
+    folder.mkdir();
+  }
+
+  for (int i = 0; i < 999; i++) {
+    generateFrame(i);
+    saveFrame("output/frame" + nf(i, 4) + ".png");
+    saveMetadata(i);
+  }
+}
+
+Purpose: Initializes the canvas, creates the output folder, and generates 999 pieces of art.
+
+Key Functions: generateFrame, saveFrame, saveMetadata.
+
+Background Color Selection
+
+color pickWeightedBackgroundColor() {
+  float r = random(1);
+  float cumulativeWeight = 0;
+  for (int i = 0; i < backgroundWeights.length; i++) {
+    cumulativeWeight += backgroundWeights[i];
+    if (r <= cumulativeWeight) {
+      return backgroundColors[i];
+    }
+  }
+  return backgroundColors[backgroundColors.length - 1];
+}
+
+Purpose: Selects a background color based on rarity weights.
+
+Palette Generation
+
+color[] generateRandomPalette() {
+  int numColors = pickPaletteSize();
+  color[] palette = new color[numColors];
+  for (int i = 0; i < numColors; i++) {
+    palette[i] = baseColors[int(random(baseColors.length))];
+  }
+  return palette;
+}
+
+Purpose: Creates a random color palette of a specified size.
+
+Rarity Rule: Palette size is determined by weighted probabilities.
+
+Pattern Drawing
+
+void drawPattern(color[] currentPalette) {
+  float centerX = width / random(2, 4);
+  float centerY = height / random(1, 4);
+
+  for (int i = 0; i < numRects; i++) {
+    float t = map(i, 0, numRects, 0, TWO_PI * 300);
+    float xOff = cos(t) * (50 + i / 1);
+    float yOff = sin(t) * (50 + i / 1);
+
+    float x = centerX + xOff;
+    float y = centerY + yOff;
+    float angle = atan2(yOff, xOff);
+
+    float rectLength = random(minRectLength, maxRectLength);
+
+    pushMatrix();
+    translate(x, y);
+    rotate(angle);
+    fill(currentPalette[int(random(currentPalette.length))]);
+    stroke(0);
+    strokeWeight(4);
+    rect(0, 0, rectLength, rectWidth);
+    popMatrix();
+  }
+}
+
+Purpose: Draws rectangles in a radial pattern using trigonometric functions.
+
+Metadata Saving
+
+void saveMetadata(int index, color backgroundColor) {
+  JSONObject metadata = new JSONObject();
+
+  metadata.setString("name", "lo #" + index);
+  metadata.setString("description", "lo (" + index + ")");
+  metadata.setString("image", "https://arweave.net/abcd1234xyz/frame" + nf(index, 4) + ".png");
+
+  metadata.setFloat("maxRectLength", maxRectLength);
+  metadata.setFloat("minRectLength", minRectLength);
+  metadata.setFloat("rectWidth", rectWidth);
+  metadata.setInt("numRects", numRects);
+  metadata.setString("background", colorToString(backgroundColor));
+
+  String filePath = sketchPath("output/metadata_" + nf(index, 4) + ".json");
+  saveJSONObject(metadata, filePath);
+}
+
+Purpose: Stores the traits and metadata for each generated piece as a JSON file.
+
+Additional Notes
+
+This project leverages randomness and probability to achieve both uniqueness and adherence to a rarity structure. The use of JSON metadata ensures compatibility with platforms that support generative art and NFTs.
+
